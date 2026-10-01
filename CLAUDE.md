@@ -27,4 +27,6 @@ Next 16 notes: `middleware.ts` is now `src/proxy.ts`; `cookies()` is async; `Lay
 - `supabase/migrations/` — schema; `src/lib/taxonomy.ts` mirrors the category seed (enforced by `taxonomy.test.ts`).
 - `src/lib/supabase/` — browser, server and proxy clients (typed with `src/lib/database.types.ts`).
 - `src/lib/auth.ts` `requireUser()` — use in every signed-in page/action; `(app)/` route group is the signed-in shell.
+- Import (`src/lib/import/`): parsers (Takeout JSON/zip, Chromium/Safari/Firefox SQLite via sql.js, Amazon CSV, generic CSV) → `prepareSignals` pipeline (window, URL minimization, `sensitive.ts`, excluded domains, disabled categories, day-level dedupe) — all inside `worker.ts` in the browser. Server actions in `(app)/import/actions.ts` re-check every batch with `guard.ts`. `public/sql-wasm.wasm` is copied by `postinstall`.
+- `src/lib/classify/rules.ts` — deterministic category rules (first pass of the hybrid classifier).
 - Auth: email+password and magic link; email links land on `/auth/callback` (PKCE `code` or `token_hash`). Post-auth redirects go through `safeNext()`.
