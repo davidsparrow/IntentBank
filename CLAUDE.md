@@ -12,6 +12,7 @@ Next 16 notes: `middleware.ts` is now `src/proxy.ts`; `cookies()` is async; `Lay
 ## Commands
 - `npm run dev` / `npm run build`
 - `npm run typecheck` · `npm run lint` · `npm test`
+- `npm run db:push [-- --dry-run]` · `npm run db:types` — hosted project via `SUPABASE_DB_URL` in `.env.local` (session pooler :5432; the CLI login is a different Supabase account, so `supabase link` isn't used). Regenerate types after every migration.
 
 ## Privacy architecture (non-negotiable)
 - **Raw export files never reach the server.** Imports are parsed in the browser; only normalized signals are sent.
@@ -24,4 +25,6 @@ Next 16 notes: `middleware.ts` is now `src/proxy.ts`; `cookies()` is async; `Lay
 
 ## Layout
 - `supabase/migrations/` — schema; `src/lib/taxonomy.ts` mirrors the category seed (enforced by `taxonomy.test.ts`).
-- `src/lib/supabase/` — browser, server and proxy clients.
+- `src/lib/supabase/` — browser, server and proxy clients (typed with `src/lib/database.types.ts`).
+- `src/lib/auth.ts` `requireUser()` — use in every signed-in page/action; `(app)/` route group is the signed-in shell.
+- Auth: email+password and magic link; email links land on `/auth/callback` (PKCE `code` or `token_hash`). Post-auth redirects go through `safeNext()`.
