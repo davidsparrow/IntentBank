@@ -1,0 +1,1347 @@
+# IntentBank
+
+**Working domain:** intentbank.net
+**Working tagline:** **They ask. You decide.**
+**Category:** Personal Data Agent / Consumer Intent Marketplace
+**Status:** Initial PRD
+**Primary thesis:** A person's behavioral data should remain under that person's control. Businesses should request permission to act on verified intent rather than purchasing copies of the person's underlying behavioral history.
+
+---
+
+# 1. Executive Summary
+
+IntentBank is a consumer-controlled personal data platform that helps people:
+
+1. Build their own private repository of behavioral and commercial intent data.
+2. Understand what that data says about them.
+3. Identify which outside companies may hold information about them.
+4. Request deletion or restriction of unwanted copies.
+5. Decide which categories of their own data may be used commercially.
+6. Receive paid requests from businesses seeking access to specific verified intent.
+7. Approve or reject each commercial relationship.
+
+IntentBank does **not** primarily operate as a traditional data broker.
+
+The core architecture is:
+
+> **Advertisers ask questions of the user's IntentBank. They do not automatically receive the underlying dataset.**
+
+Example:
+
+A user's private activity suggests that they have researched induction ranges, visited appliance retailers, compared Bosch and Miele products, and read kitchen-remodeling content within the past 30 days.
+
+IntentBank may classify this as:
+
+**Kitchen Appliances → Induction Range → High Purchase Intent → 92% confidence**
+
+An advertiser can request:
+
+> Adults in California currently demonstrating high purchase intent for premium induction ranges.
+
+IntentBank determines locally or within a privacy-protected user vault whether the user qualifies.
+
+The user receives:
+
+> **Bosch would like permission to send you a personalized offer.**
+> Reason: Your IntentBank shows strong current interest in premium induction cooking.
+> Duration: 30 days
+> Data provided: Qualification + selected preference signals
+> Raw browsing history: Not shared
+> Compensation: $4.20
+
+The user decides.
+
+**Accept**
+**Decline**
+**Always allow this company**
+**Never allow this company**
+
+IntentBank takes a percentage of completed commercial transactions.
+
+---
+
+# 2. Product Principle
+
+## Data is not the product. Permission is the product.
+
+Traditional advertising technology works roughly like:
+
+**Observe → Profile → Aggregate → Sell → Target**
+
+IntentBank reverses the control:
+
+**Collect for yourself → Understand → Protect → Receive request → Decide → Get paid**
+
+The consumer remains the decision-maker.
+
+The platform should therefore avoid unnecessary transfers of raw personal history.
+
+Where technically feasible, advertisers should receive:
+
+* qualification
+* confidence level
+* selected intent attributes
+* coarse demographic/contextual attributes explicitly permitted by the user
+* permission to communicate
+* optionally an anonymized or pseudonymous identifier
+
+rather than a copy of the underlying history used to derive those attributes.
+
+---
+
+# 3. Competitive Position
+
+IntentBank combines pieces that currently tend to exist as separate products:
+
+**DeleteMe / privacy tools**
+Remove personal information from outside databases.
+
+**Vana / personal data infrastructure**
+Give the individual control over their own information.
+
+**Gener8 / behavioral data panels**
+Allow consumers to receive value for consensually shared behavioral information.
+
+**Verb / personal data marketplace**
+Allow users to determine what information they sell and at what price.
+
+**Brave / local ad matching**
+Use behavioral signals without necessarily exposing the underlying browsing history.
+
+IntentBank's intended differentiation is the complete lifecycle:
+
+> **RECLAIM → OWN → UNDERSTAND → PROTECT → NEGOTIATE → GET PAID**
+
+The user does not merely contribute to somebody else's data pool.
+
+The user maintains their own **IntentBank**.
+
+---
+
+# 4. Primary User Promise
+
+## For consumers
+
+> **Your intentions are valuable. Keep them private until somebody makes it worth your while.**
+
+IntentBank helps users understand and control the commercial profile that ordinarily gets constructed about them behind the scenes.
+
+## For advertisers
+
+> Reach people demonstrating real, recent intent—with their permission.
+
+Advertisers gain access to unusually high-quality first-party/zero-party-style signals without requiring unrestricted ownership of the consumer's complete behavioral record.
+
+---
+
+# 5. Target Users
+
+## Consumer
+
+Initial target:
+
+* privacy-aware but not privacy-obsessed
+* comfortable connecting digital accounts
+* interested in earning modest amounts from data they already generate
+* shops online frequently
+* likely to have meaningful commercial intent signals
+* wants visibility into what platforms infer about them
+* doesn't want to manually manage privacy requests
+
+IntentBank should not initially position itself as software only for hardcore privacy advocates.
+
+The stronger mainstream proposition is:
+
+> **Companies already make money from knowing what you want. IntentBank lets you control that relationship.**
+
+## Buyer
+
+Initial buyer types:
+
+* ecommerce brands
+* DTC companies
+* automotive
+* home improvement
+* travel
+* financial comparison services where legally appropriate
+* SaaS companies
+* local service marketplaces
+* research organizations
+
+Highly sensitive categories should initially be excluded.
+
+---
+
+# 6. Core Objects
+
+IntentBank revolves around six primary objects.
+
+## User Vault
+
+Private repository containing information the user has intentionally imported, collected or entered.
+
+## Signal
+
+An individual behavioral observation.
+
+Examples:
+
+* visited three electric-bike pages
+* searched for standing desks
+* purchased running shoes
+* watched three videos about Iceland
+* received a hotel confirmation
+* saved a particular product
+* subscribed to a newsletter
+
+## Intent
+
+A higher-level interpretation derived from multiple signals.
+
+Example:
+
+**Electric Bike Purchase**
+
+Status: Active
+Confidence: 86%
+Recency: 8 days
+Estimated purchase horizon: 0–45 days
+
+## Permission
+
+The user's rules controlling what may happen with specific categories.
+
+Example:
+
+**Travel Intent**
+
+May detect: Yes
+May store: Yes
+May use for offers: Yes
+May reveal raw source data: No
+
+## Buyer Request
+
+An advertiser's request to find users matching defined criteria.
+
+## Deal
+
+A specific permission exchange between buyer and user.
+
+---
+
+# 7. Privacy Categories
+
+The user should have category-level controls.
+
+Suggested initial categories:
+
+* Shopping
+* Travel
+* Automotive
+* Home
+* Technology
+* Entertainment
+* Food
+* Education
+* Professional interests
+
+Higher-risk categories should either be completely excluded initially or subject to significantly stricter controls.
+
+Examples:
+
+* health
+* precise location
+* finances
+* political activity
+* religion
+* sexuality
+* children
+* private communications
+
+IntentBank should default toward **not monetizing sensitive categories**.
+
+---
+
+# 8. Product Architecture
+
+IntentBank should conceptually contain five layers.
+
+## Layer 1 — Personal Data Vault
+
+Stores or references the user's own information.
+
+Possible sources over time:
+
+* browser activity
+* search history
+* Google Takeout imports
+* ecommerce purchase history
+* email receipts
+* subscriptions
+* streaming history
+* saved products
+* calendar events
+* social data exports
+* app usage
+* manually entered preferences
+
+The vault must clearly distinguish:
+
+**Raw data**
+
+from
+
+**AI-derived interpretations**
+
+and
+
+**User-confirmed facts.**
+
+---
+
+# 9. Browser Component
+
+IntentBank may eventually include a browser extension or browser companion.
+
+Its purpose should primarily be:
+
+* help the user privately capture their own activity
+* classify intent
+* show what is being inferred
+* allow sites/categories to be excluded
+* provide user controls
+* optionally send privacy signals
+* sync permitted information with the vault
+
+The architecture should **not depend upon selling raw extension-collected browsing histories**.
+
+Preferred architecture:
+
+**Browser activity → private processing → intent classification → vault**
+
+rather than:
+
+**Browser activity → IntentBank central database → advertiser**
+
+Whenever possible, only derived signals should leave the local capture environment.
+
+---
+
+# 10. Intent Engine
+
+This is arguably IntentBank's core intellectual product.
+
+Signals become intents.
+
+Example raw signals:
+
+* searched "best induction cooktop"
+* visited Bosch appliances
+* opened Miele induction product page
+* read Reddit induction discussion
+* visited local appliance retailer
+
+IntentBank derives:
+
+### Premium Induction Cooktop
+
+**Confidence:** 94%
+**Commercial relevance:** High
+**Recency:** Very recent
+**Likely purchase horizon:** 0–30 days
+**Estimated commercial value:** High
+
+The user should be able to see:
+
+**Why IntentBank thinks this**
+
+and remove incorrect signals.
+
+---
+
+# 11. Intent Lifecycle
+
+Intent should decay over time.
+
+Someone researching mattresses six months ago should not permanently remain:
+
+**Mattress Buyer**
+
+Suggested states:
+
+**Emerging → Active → Strong → Cooling → Dormant**
+
+IntentBank should continuously adjust confidence based on:
+
+* signal frequency
+* source diversity
+* recency
+* purchase completion
+* user confirmation
+* explicit dismissal
+
+Example:
+
+> Are you still shopping for an electric bike?
+
+**Yes**
+**Already bought one**
+**Just researching**
+**Not interested**
+
+This improves both user trust and advertiser value.
+
+---
+
+# 12. Intent Dashboard
+
+The primary consumer dashboard should feel more like a financial portfolio than an advertising profile.
+
+Example:
+
+## Your IntentBank
+
+**Active Intent**
+
+Electric Vehicle
+92% · Strong · 12 signals
+
+Kitchen Remodel
+81% · Active · 19 signals
+
+Iceland Travel
+68% · Emerging · 7 signals
+
+AI Coding Tools
+61% · Long-term interest
+
+Each card opens:
+
+* inferred intent
+* supporting sources
+* confidence
+* recency
+* monetization setting
+* estimated market demand
+* current offers
+* delete/disable controls
+
+---
+
+# 13. Consumer AI Agent
+
+The AI layer should dramatically reduce complexity.
+
+The user should be able to ask:
+
+> What do companies probably know about me?
+
+> Why do you think I'm buying an EV?
+
+> Stop collecting anything about healthcare.
+
+> Delete everything related to politics.
+
+> Which companies currently have offers for me?
+
+> Why is this advertiser offering $6?
+
+> Remove my information from data brokers.
+
+> Never let airlines see my hotel searches.
+
+The AI agent translates natural language into auditable settings and actions.
+
+Important:
+
+The agent should summarize a consequential change before execution where necessary.
+
+Example:
+
+> This will remove your travel-intent history from IntentBank and prevent future travel intent from being commercialized.
+
+---
+
+# 14. Privacy / Reclaim Layer
+
+IntentBank should eventually help users identify information being stored elsewhere.
+
+Possible mechanisms include:
+
+* connected email account analysis
+* platform account inventory
+* uploaded data exports
+* privacy request templates
+* supported automated privacy requests
+* data broker removal integrations
+* account deletion workflows
+
+The consumer experience should be:
+
+## Outside Your Bank
+
+**148 companies detected**
+
+Likely holding profile data: 73
+Data brokers detected: 18
+Inactive accounts: 31
+Eligible for automated action: 42
+
+Actions:
+
+**Remove**
+**Request My Data**
+**Close Account**
+**Ignore**
+**Keep**
+
+IntentBank does not need to build full DeleteMe-style operations in V0.
+
+---
+
+# 15. Data Import
+
+The easiest early version may rely more heavily on **user-authorized imports** than passive browser tracking.
+
+V0/V1 data sources could include:
+
+* uploaded Google Takeout files
+* Amazon order exports
+* browser-history export
+* CSV uploads
+* email receipt parsing
+* manually supplied interests
+* account connectors where permitted
+
+IntentBank then turns messy exports into understandable signals and intents.
+
+This provides value without requiring invasive background collection.
+
+---
+
+# 16. Intent Marketplace
+
+Advertisers do not search identifiable individuals.
+
+They create **Intent Requests**.
+
+Example:
+
+## Buyer Request
+
+**Category:** Automotive
+**Intent:** New Electric Vehicle
+**Confidence:** >80%
+**Recency:** Last 30 days
+**Region:** Northern California
+**Price range:** $40K–$80K vehicle
+
+Buyer proposes:
+
+**$5.00/user**
+
+Desired permission:
+
+* confirm qualification
+* send one personalized offer
+* retain anonymous campaign measurement ID for 60 days
+
+Buyer explicitly does **not** receive:
+
+* complete browsing history
+* unrelated interests
+* historical search queries
+* private messages
+* data outside the approved scope
+
+---
+
+# 17. User Offer Experience
+
+User notification:
+
+## Someone wants access to your intent.
+
+**Volvo**
+
+You currently match:
+
+**Premium Electric Vehicle Shopper**
+
+They want:
+
+* confirmation that you currently match this intent
+* your selected vehicle preferences
+* permission to send one offer
+
+They will **not receive your browsing history.**
+
+Duration:
+
+30 days
+
+You receive:
+
+**$4.25**
+
+IntentBank receives:
+
+**$0.75**
+
+Actions:
+
+**Accept $4.25**
+
+**Decline**
+
+**Always consider Volvo offers**
+
+**Never show me Volvo offers**
+
+---
+
+# 18. Buyer Blind Matching
+
+The ideal architecture is a blind marketplace.
+
+Buyer asks:
+
+> Find users satisfying X.
+
+IntentBank responds:
+
+> 18,492 potentially qualifying users.
+
+The buyer does not initially know their identities.
+
+IntentBank distributes the offer.
+
+Only users who accept progress into the next permission state.
+
+This prevents buyers from browsing consumer profiles.
+
+---
+
+# 19. User Pricing
+
+Do not force consumers to manually price every individual signal.
+
+That would become exhausting.
+
+IntentBank should suggest pricing.
+
+Example:
+
+**Your EV intent**
+
+Estimated buyer demand: High
+
+Typical request:
+
+$3–$9
+
+Your minimum:
+
+**$5**
+
+Options:
+
+**Auto-price**
+
+**Minimum price**
+
+**Never sell**
+
+For advanced users:
+
+* company-specific pricing
+* category pricing
+* exclusive-access pricing
+* duration-based pricing
+
+---
+
+# 20. IntentBank Wallet
+
+Users need a clear economic account.
+
+Dashboard:
+
+## Balance
+
+Available: **$42.60**
+
+Pending: $11.20
+
+Lifetime earnings: $184.75
+
+This Month:
+
+Automotive: $19.80
+Travel: $13.10
+Technology: $9.70
+
+Transaction history should show exactly:
+
+* buyer
+* permission
+* duration
+* information disclosed
+* payment
+* IntentBank fee
+
+This transparency is central to trust.
+
+---
+
+# 21. Revenue Model
+
+Primary revenue:
+
+### Transaction fee
+
+Suggested initial model:
+
+**Advertiser pays $5.00**
+
+User receives: **$4.00**
+IntentBank receives: **$1.00**
+
+Equivalent to a 20% marketplace fee.
+
+Actual percentage can later vary.
+
+Potential future revenue:
+
+* advertiser platform fees
+* enterprise APIs
+* privacy-agent subscription
+* premium consumer automation
+* anonymous market intelligence
+* verified intent APIs
+* brand subscriptions
+* data-clean-room services
+
+Avoid monetizing user information outside explicitly authorized transactions.
+
+---
+
+# 22. Buyer Interface
+
+Advertisers receive a campaign-style builder.
+
+## Create Intent Request
+
+**Who are you looking for?**
+
+Category
+Intent type
+Intent confidence
+Intent recency
+Region
+Optional preferences
+
+Then:
+
+**What are you requesting?**
+
+Qualification only
+Anonymous survey
+One offer
+Product recommendation permission
+Lead submission
+Contact permission
+
+Then:
+
+**What will you pay?**
+
+Per qualified user:
+
+$_____
+
+Campaign budget:
+
+$_____
+
+Maximum respondents:
+
+---
+
+---
+
+# 23. Marketplace Quality
+
+A buyer should pay more for more valuable intent.
+
+Possible signal-quality dimensions:
+
+* recency
+* frequency
+* source diversity
+* user confirmation
+* explicit shopping behavior
+* completed comparison behavior
+* estimated purchase horizon
+
+IntentBank could eventually create something like:
+
+### IntentScore
+
+0–100
+
+But this score should represent **strength of a particular commercial intent**, not a universal score of the person.
+
+---
+
+# 24. Trust Ledger
+
+Every commercial use should create an immutable or strongly auditable record.
+
+Example:
+
+**September 18**
+
+Company: Volvo
+Intent: Premium EV
+Permission: One promotional message
+Data released: Vehicle preferences + intent confirmation
+Expiration: October 18
+Payment: $4.25
+
+Actions:
+
+**View permission**
+
+**Revoke future access**
+
+**Block company**
+
+Users should always be able to answer:
+
+> Who got what?
+
+---
+
+# 25. Permission Receipts
+
+Every accepted request generates a human-readable permission receipt.
+
+Example:
+
+### IntentBank Permission #183817
+
+You authorized Volvo to:
+
+* know that you met the Premium EV intent criteria
+* receive your preferred vehicle size and estimated purchase window
+* send one promotional communication
+
+You did not authorize Volvo to receive:
+
+* your browsing history
+* your unrelated interests
+* your search queries
+
+Permission expires:
+
+October 18, 2026
+
+This becomes an important trust feature and potentially an important B2B compliance feature.
+
+---
+
+# 26. Buyer Reputation
+
+IntentBank should eventually rate marketplace behavior, without making users research every advertiser.
+
+Buyer profiles can show:
+
+**Verified company**
+
+Acceptance rate
+Complaint rate
+Average payment
+Typical request duration
+Data retention practices
+
+Users can configure:
+
+> Only show requests from verified buyers.
+
+---
+
+# 27. V0 — Personal IntentBank
+
+## Objective
+
+Prove consumers find value in seeing and controlling their own inferred commercial profile.
+
+**No advertiser marketplace required.**
+
+V0 includes:
+
+* account creation
+* private vault
+* manual data upload
+* browser-history import
+* ecommerce-history import where practical
+* AI classification
+* intent dashboard
+* signal inspection
+* delete signal
+* correct intent
+* mark "already purchased"
+* disable category
+* monetization preference placeholder
+* privacy settings
+* export/delete account
+
+V0 homepage promise:
+
+> **See the commercial profile hiding inside your own data.**
+
+Success question:
+
+**Will people connect/import enough information to find the resulting IntentBank useful?**
+
+---
+
+# 28. V0.5 — Data Agent
+
+Add conversational control.
+
+Features:
+
+* Ask IntentBank
+* summarize active intentions
+* explain why an intent exists
+* clean inaccurate classifications
+* privacy recommendations
+* category controls
+* user-defined prohibited categories
+* intent expiration
+* account/company discovery from imported data
+
+Example prompt:
+
+> Show me everything that suggests I'm buying a new car.
+
+This should return an understandable evidence trail.
+
+---
+
+# 29. V1 — Reclaim
+
+Add privacy-control features.
+
+Features:
+
+* company inventory
+* account detection
+* data-broker detection
+* privacy request generation
+* request tracking
+* deletion status
+* request-my-data workflows
+* remove/restrict actions
+* optional supported privacy automation
+
+The key screen becomes:
+
+## Your Data Outside IntentBank
+
+Known companies: 162
+
+Actions available: 81
+
+Pending requests: 12
+
+Removed: 37
+
+IntentBank begins serving as the user's **personal data agent**.
+
+---
+
+# 30. V1.5 — Marketplace Pilot
+
+Do not launch a giant advertiser marketplace.
+
+Start with controlled campaigns.
+
+Partner with perhaps:
+
+* 3–10 brands
+* one or two intent categories
+
+Good initial categories:
+
+**Home improvement**
+
+**Automotive**
+
+**Travel**
+
+These categories have:
+
+* high purchase values
+* obvious commercial intent
+* meaningful advertiser economics
+* relatively understandable consumer expectations
+
+Avoid starting with cheap commodity advertising.
+
+---
+
+# 31. V2 — Intent Marketplace
+
+Launch the full buyer product.
+
+Features:
+
+* buyer signup
+* business verification
+* campaign builder
+* intent query
+* blind audience count
+* campaign budget
+* per-user offer
+* user acceptance
+* permissions
+* messaging/contact handoff
+* payment
+* reporting
+* fraud protection
+* buyer reputation
+* transaction ledger
+
+---
+
+# 32. V2.5 — Personal Pricing Agent
+
+IntentBank starts negotiating for the consumer.
+
+Example:
+
+> Toyota is offering $2.10. Similar EV-intent requests have recently cleared around $4.80. Your minimum is $4.00.
+
+Possible action:
+
+**Counter automatically**
+
+The agent can represent thousands or millions of consumers collectively while every individual retains personal permission controls.
+
+This creates an interesting economic dynamic:
+
+### collective bargaining for consumer intent.
+
+---
+
+# 33. V3 — Intent API
+
+Businesses and AI agents can programmatically submit structured requests.
+
+Example:
+
+```text
+Intent:
+Home > Mattress
+
+Confidence:
+>85%
+
+Recency:
+<21 days
+
+Location:
+California
+
+Requested Permission:
+One personalized offer
+
+Compensation:
+$3.50
+```
+
+IntentBank can report:
+
+**Estimated eligible audience: 23,481**
+
+without exposing identities.
+
+---
+
+# 34. V3 — AI Agent Marketplace
+
+Longer term, IntentBank may become an agent-to-agent system.
+
+Advertiser agent:
+
+> Find people currently shopping for a premium mattress and offer $7 for permission to provide a recommendation.
+
+Consumer IntentBank agent:
+
+> This matches your approved Home category. Saatva is verified. $7 exceeds your $4 threshold. Shall I accept?
+
+Eventually:
+
+> Automatically accept requests satisfying my rules.
+
+IntentBank becomes programmable economic infrastructure between buyer agents and consumer agents.
+
+---
+
+# 35. Important UX Principle
+
+Do not make the user manage hundreds of privacy toggles.
+
+Default experience:
+
+### Three modes
+
+**Private**
+
+Never commercialize this category.
+
+**Ask Me**
+
+Show me relevant offers.
+
+**Auto**
+
+Automatically accept qualifying offers above my rules.
+
+Advanced controls exist underneath.
+
+---
+
+# 36. Onboarding
+
+Initial onboarding should feel almost magical.
+
+### Step 1
+
+**Build your IntentBank**
+
+Import a source.
+
+### Step 2
+
+AI processes the information.
+
+### Step 3
+
+Reveal:
+
+> We found 19 active intentions.
+
+### Step 4
+
+Show visually interesting results:
+
+**Home Remodel — 94%**
+
+**Electric Vehicle — 82%**
+
+**Italy Trip — 73%**
+
+**New Laptop — 69%**
+
+### Step 5
+
+Ask:
+
+> Which of these would you ever allow companies to make offers against?
+
+The user immediately understands the product.
+
+---
+
+# 37. Avoid During Onboarding
+
+Do not begin with:
+
+* legal terminology
+* privacy policy language
+* consent taxonomy
+* data broker explanations
+* twenty toggles
+* advertiser marketplace mechanics
+
+First reveal value.
+
+Then establish control.
+
+Then introduce earning.
+
+---
+
+# 38. User Data Model
+
+Suggested high-level database entities:
+
+**users**
+
+**vault_sources**
+
+**signals**
+
+**intents**
+
+**intent_signal_relationships**
+
+**categories**
+
+**permissions**
+
+**blocked_buyers**
+
+**buyer_accounts**
+
+**buyer_requests**
+
+**request_matches**
+
+**offers**
+
+**deals**
+
+**permission_receipts**
+
+**payments**
+
+**privacy_targets**
+
+**privacy_requests**
+
+**audit_events**
+
+Highly sensitive raw vault contents should be architecturally separated from ordinary application metadata.
+
+---
+
+# 39. Security Principles
+
+IntentBank's credibility depends on architecture.
+
+Required principles:
+
+* encryption in transit
+* encryption at rest
+* strict isolation between users
+* minimal employee access
+* auditable administrative access
+* clear deletion
+* user export
+* category-level removal
+* explicit retention periods
+* separation of identity from marketplace matching where possible
+* no silent secondary monetization
+* no undisclosed model training on private user data
+
+Long term, explore:
+
+* local-first processing
+* encrypted personal vaults
+* confidential computing
+* private set intersection
+* zero-knowledge proofs
+* privacy-preserving matching
+
+These should not block V0.
+
+---
+
+# 40. Marketplace Safety
+
+Do not initially allow unrestricted buyer questions.
+
+Advertisers choose from structured approved dimensions.
+
+Bad:
+
+> Find people who searched for bankruptcy.
+
+Better marketplace design prevents creation of problematic segments in the first place.
+
+IntentBank should maintain:
+
+* prohibited categories
+* prohibited combinations
+* minimum audience sizes
+* buyer verification
+* campaign review
+* abuse detection
+
+---
+
+# 41. What IntentBank Must Never Become
+
+IntentBank should never quietly drift into:
+
+> We convinced consumers to give us incredibly intimate data and then became another data broker.
+
+That destroys the entire reason to exist.
+
+The product covenant should be:
+
+### The user owns the relationship.
+
+IntentBank may facilitate transactions.
+
+IntentBank does not obtain unrestricted rights to monetize everything in the vault.
+
+---
+
+# 42. Key Metrics
+
+## V0
+
+Activation:
+
+Percentage importing first source.
+
+Discovery:
+
+Average meaningful intents identified.
+
+Accuracy:
+
+Percentage of identified intents users confirm.
+
+Retention:
+
+Users returning to inspect/update their IntentBank.
+
+Trust:
+
+Percentage willing to connect a second source.
+
+## Marketplace
+
+Eligible users per campaign.
+
+Offer acceptance rate.
+
+Average consumer payout.
+
+Average buyer acquisition cost.
+
+Repeat buyer rate.
+
+Revenue per active IntentBank user.
+
+Permission revocation rate.
+
+Complaint rate.
+
+---
+
+# 43. North Star Metric
+
+Long term:
+
+## User-Authorized Intent Value
+
+Total commercial value generated through explicit user
