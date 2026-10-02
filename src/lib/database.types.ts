@@ -9,6 +9,57 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analysis_runs: {
+        Row: {
+          error: string | null
+          finished_at: string | null
+          id: string
+          input_tokens: number | null
+          intents_found: number
+          items_sent: number
+          model: string
+          output_tokens: number | null
+          signals_classified: number
+          signals_considered: number
+          signals_removed: number
+          started_at: string
+          status: Database["public"]["Enums"]["analysis_status"]
+          user_id: string
+        }
+        Insert: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          input_tokens?: number | null
+          intents_found?: number
+          items_sent?: number
+          model: string
+          output_tokens?: number | null
+          signals_classified?: number
+          signals_considered?: number
+          signals_removed?: number
+          started_at?: string
+          status?: Database["public"]["Enums"]["analysis_status"]
+          user_id: string
+        }
+        Update: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          input_tokens?: number | null
+          intents_found?: number
+          items_sent?: number
+          model?: string
+          output_tokens?: number | null
+          signals_classified?: number
+          signals_considered?: number
+          signals_removed?: number
+          started_at?: string
+          status?: Database["public"]["Enums"]["analysis_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_events: {
         Row: {
           action: string
@@ -157,6 +208,8 @@ export type Database = {
       }
       intents: {
         Row: {
+          analyzed_at: string | null
+          base_strength: number
           category_slug: string
           commercial_value: string | null
           confidence: number
@@ -164,11 +217,13 @@ export type Database = {
           derived_by: Database["public"]["Enums"]["provenance"]
           explanation: string | null
           feedback: Database["public"]["Enums"]["intent_feedback"] | null
+          feedback_at: string | null
           first_signal_at: string | null
           id: string
           key: string
           label: string
           last_signal_at: string | null
+          purchase_completed: boolean
           purchase_horizon: string | null
           signal_count: number
           source_count: number
@@ -178,6 +233,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          analyzed_at?: string | null
+          base_strength?: number
           category_slug: string
           commercial_value?: string | null
           confidence: number
@@ -185,11 +242,13 @@ export type Database = {
           derived_by: Database["public"]["Enums"]["provenance"]
           explanation?: string | null
           feedback?: Database["public"]["Enums"]["intent_feedback"] | null
+          feedback_at?: string | null
           first_signal_at?: string | null
           id?: string
           key: string
           label: string
           last_signal_at?: string | null
+          purchase_completed?: boolean
           purchase_horizon?: string | null
           signal_count?: number
           source_count?: number
@@ -199,6 +258,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          analyzed_at?: string | null
+          base_strength?: number
           category_slug?: string
           commercial_value?: string | null
           confidence?: number
@@ -206,11 +267,13 @@ export type Database = {
           derived_by?: Database["public"]["Enums"]["provenance"]
           explanation?: string | null
           feedback?: Database["public"]["Enums"]["intent_feedback"] | null
+          feedback_at?: string | null
           first_signal_at?: string | null
           id?: string
           key?: string
           label?: string
           last_signal_at?: string | null
+          purchase_completed?: boolean
           purchase_horizon?: string | null
           signal_count?: number
           source_count?: number
@@ -366,6 +429,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      analysis_status: "running" | "succeeded" | "failed"
       audit_actor: "user" | "system" | "agent"
       intent_feedback:
         | "still_shopping"
@@ -529,6 +593,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      analysis_status: ["running", "succeeded", "failed"],
       audit_actor: ["user", "system", "agent"],
       intent_feedback: [
         "still_shopping",

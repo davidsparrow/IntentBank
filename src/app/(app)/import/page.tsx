@@ -4,6 +4,9 @@ import { Importer } from "./importer";
 import { ManualForm } from "./manual-form";
 import { SourcesList } from "./sources-list";
 
+// Imports trigger intent analysis, which can take a while for large vaults.
+export const maxDuration = 300;
+
 export default async function ImportPage() {
   const { supabase } = await requireUser();
   const [{ data: sources }, { data: excluded }, { data: perms }] = await Promise.all([

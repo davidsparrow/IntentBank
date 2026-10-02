@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import type { PreparedSignal, SignalKind, SourceKind } from "@/lib/import/types"
 import type { ImportFormat, WorkerRequest, WorkerResponse } from "@/lib/import/worker";
 import { type CategorySlug, getCategory } from "@/lib/taxonomy";
 import { cn } from "@/lib/utils";
+import { runAnalysis } from "../bank/actions";
 import { failImport, finishImport, startImport, uploadSignals } from "./actions";
 
 const BATCH = 500;
@@ -34,7 +36,7 @@ type Phase =
   | { name: "mapping"; preview: CsvPreview; mapping: CsvMapping | null }
   | { name: "preview"; signals: PreparedSignal[]; stats: PrepareStats; notes: string[] }
   | { name: "uploading"; done: number; total: number }
-  | { name: "done"; stored: number; duplicates: number }
+  | { name: "done"; stored: number; duplicates: number; analysis: "running" | { intents: number } | { error: string } }
   | { name: "error"; message: string };
 
 export function Importer({ excludedDomains, disabledCategories }: { excludedDomains: string[]; disabledCategories: CategorySlug[] }) {
@@ -112,8 +114,12 @@ export function Importer({ excludedDomains, disabledCategories }: { excludedDoma
         duplicates,
         rejectedByServer: rejected,
       });
-      setPhase({ name: "done", stored, duplicates });
       setFiles([]);
+      // Analysis runs automatically after every import; a re-run button lives on Your Bank.
+      setPhase({ name: "done", stored, duplicates, analysis: "running" });
+      router.refresh();
+      const r = await runAnalysis();
+      setPhase({ name: "done", stored, duplicates, analysis: r.ok ? { intents: r.summary.intents } : { error: r.error } });
       router.refresh();
     } catch (err) {
       const message = (err as Error).message;
@@ -122,7 +128,7 @@ export function Importer({ excludedDomains, disabledCategories }: { excludedDoma
     }
   }
 
-  const busy = phase.name === "parsing" || phase.name === "uploading";
+  const busy = phase.name === "parsing" || phase.name === "uploading" || (phase.name === "done" && phase.analysis === "running");
 
   return (
     <section className="space-y-4">
@@ -223,10 +229,24 @@ function PhaseView({
       return <Progress label={`Saving ${phase.done.toLocaleString()} of ${phase.total.toLocaleString()} signals…`} value={phase.done / phase.total} />;
     case "done":
       return (
-        <p role="status" className="text-sm">
-          Added <strong>{phase.stored.toLocaleString()}</strong> signals to your IntentBank
-          {phase.duplicates > 0 && ` (${phase.duplicates.toLocaleString()} were already there)`}. Intent analysis comes next.
-        </p>
+        <div className="space-y-2 text-sm">
+          <p role="status">
+            Added <strong>{phase.stored.toLocaleString()}</strong> signals to your IntentBank
+            {phase.duplicates > 0 && ` (${phase.duplicates.toLocaleString()} were already there)`}.
+          </p>
+          {phase.analysis === "running" ? (
+            <p className="text-muted-foreground">Analyzing your IntentBank… this can take a minute.</p>
+          ) : "error" in phase.analysis ? (
+            <p role="alert" className="text-destructive">{phase.analysis.error}</p>
+          ) : (
+            <p>
+              Found <strong>{phase.analysis.intents}</strong> intents.{" "}
+              <Link href="/bank" className="font-medium underline underline-offset-4">
+                See your IntentBank →
+              </Link>
+            </p>
+          )}
+        </div>
       );
     case "mapping":
       return <CsvMapper preview={phase.preview} mapping={phase.mapping} onChange={onMapping} onSubmit={onParseCsv} />;

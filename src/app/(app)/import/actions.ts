@@ -6,6 +6,8 @@ import { requireUser } from "@/lib/auth";
 import { batchSchema, guardSignals } from "@/lib/import/guard";
 import { hash53 } from "@/lib/import/normalize";
 import { sensitiveCategory } from "@/lib/import/sensitive";
+import { intentKey } from "@/lib/intents/merge";
+import { assess, evidenceStrength } from "@/lib/intents/score";
 import type { PreparedSignal, SourceKind } from "@/lib/import/types";
 import { COMMERCIAL_CATEGORIES, getCategory } from "@/lib/taxonomy";
 
@@ -142,6 +144,7 @@ const manualSchema = z.object({
 });
 
 const HORIZON_LABEL = { now: "buying now", soon: "next few months", someday: "someday" } as const;
+const HORIZON_RANGE = { now: "0-30 days", soon: "1-3 months", someday: "6+ months" } as const;
 
 export async function addManualInterest(_: ManualState, form: FormData): Promise<ManualState> {
   const { supabase, userId } = await requireUser();
@@ -175,19 +178,55 @@ export async function addManualInterest(_: ManualState, form: FormData): Promise
   }
 
   const title = `${text} (${HORIZON_LABEL[horizon]})`;
-  const { error } = await supabase.from("signals").insert({
+  const occurredAt = new Date().toISOString();
+  const { data: signal, error } = await supabase.from("signals").insert({
     user_id: userId,
     source_id: source.id,
     kind: "stated",
-    occurred_at: new Date().toISOString(),
+    occurred_at: occurredAt,
     title,
     category_slug: category,
     classified_by: "user",
     dedupe_key: hash53(`stated|${text.toLowerCase()}`),
-  });
+  }).select("id").single();
   if (error) {
     return { error: error.code === "23505" ? "You've already added that interest." : error.message };
   }
+
+  // A stated interest is a user-confirmed intent right away — no model call needed. Later analyses
+  // see its key and fold related activity into it.
+  const key = intentKey(category, text);
+  const { data: existingIntent } = await supabase.from("intents").select("id").eq("key", key).maybeSingle();
+  let intentId = existingIntent?.id;
+  if (intentId) {
+    await supabase.from("intents").update({ user_confirmed: true }).eq("id", intentId);
+  } else {
+    const strength = evidenceStrength([{ kind: "stated", occurred_at: occurredAt, domain: null, title, query: null }]);
+    const scored = assess({ base_strength: strength.base, last_signal_at: occurredAt, feedback: null, feedback_at: null, purchase_completed: false });
+    const created = await supabase
+      .from("intents")
+      .insert({
+        user_id: userId,
+        key,
+        category_slug: category,
+        label: text.charAt(0).toUpperCase() + text.slice(1, 80),
+        explanation: `You told IntentBank you're interested in this (${HORIZON_LABEL[horizon]}).`,
+        purchase_horizon: HORIZON_RANGE[horizon],
+        derived_by: "user",
+        user_confirmed: true,
+        base_strength: strength.base,
+        ...scored,
+        signal_count: 1,
+        source_count: 1,
+        first_signal_at: occurredAt,
+        last_signal_at: occurredAt,
+      })
+      .select("id")
+      .single();
+    if (created.error) return { error: created.error.message };
+    intentId = created.data.id;
+  }
+  await supabase.from("intent_signals").insert({ intent_id: intentId, signal_id: signal.id, user_id: userId });
 
   const { count } = await supabase.from("signals").select("*", { count: "exact", head: true }).eq("source_id", source.id);
   await supabase.from("vault_sources").update({ signal_count: count ?? 0 }).eq("id", source.id);
