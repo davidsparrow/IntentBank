@@ -43,3 +43,8 @@ next-env.d.ts
 
 # copied from node_modules by postinstall
 /public/sql-wasm.wasm
+
+# e2e
+/e2e/.fixtures/
+/test-results/
+/playwright-report/

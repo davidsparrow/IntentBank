@@ -11,7 +11,9 @@ Next 16 notes: `middleware.ts` is now `src/proxy.ts`; `cookies()` is async; `Lay
 
 ## Commands
 - `npm run dev` / `npm run build`
-- `npm run typecheck` · `npm run lint` · `npm test`
+- `npm run typecheck` · `npm run lint` · `npm test` (offline unit tests)
+- `npm run test:integration` — Vitest against the hosted DB (model stubbed); creates/deletes its own users
+- `npm run e2e` — Playwright in local Chrome against the hosted DB; `E2E_LIVE_MODEL=1` adds the paid real-model spec. Note: every e2e import triggers an analysis (a paid model call when credits exist)
 - `npm run db:push [-- --dry-run]` · `npm run db:types` — hosted project via `SUPABASE_DB_URL` in `.env.local` (session pooler :5432; the CLI login is a different Supabase account, so `supabase link` isn't used). Regenerate types after every migration.
 
 ## Privacy architecture (non-negotiable)
@@ -29,4 +31,5 @@ Next 16 notes: `middleware.ts` is now `src/proxy.ts`; `cookies()` is async; `Lay
 - `src/lib/auth.ts` `requireUser()` — use in every signed-in page/action; `(app)/` route group is the signed-in shell.
 - Import (`src/lib/import/`): parsers (Takeout JSON/zip, Chromium/Safari/Firefox SQLite via sql.js, Amazon CSV, generic CSV) → `prepareSignals` pipeline (window, URL minimization, `sensitive.ts`, excluded domains, disabled categories, day-level dedupe) — all inside `worker.ts` in the browser. Server actions in `(app)/import/actions.ts` re-check every batch with `guard.ts`. `public/sql-wasm.wasm` is copied by `postinstall`.
 - `src/lib/classify/rules.ts` — deterministic category rules (first pass of the hybrid classifier).
+- Intent engine (`src/lib/intents/`): `items.ts` collapses signals into ≤1500 de-duplicated summaries (only kind, date, domain, title/search text, rule category — never URL paths, amounts or IDs) → `model.ts` (Claude Sonnet 5.5, structured output, `fallbacks: "default"`) → `merge.ts` validates refs/keys/categories → `analyze.ts` writes as the user (RLS). The model groups and second-pass classifies; it never scores. Confidence = `base_strength` × 21-day half-life decay, computed in `score.ts`; `refreshDecay` reapplies it without a model call. User feedback columns are never overwritten by analysis. Stated interests become `derived_by: 'user'` intents immediately.
 - Auth: email+password and magic link; email links land on `/auth/callback` (PKCE `code` or `token_hash`). Post-auth redirects go through `safeNext()`.

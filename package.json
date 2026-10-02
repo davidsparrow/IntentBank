@@ -11,7 +11,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "db:push": "scripts/db.sh push",
     "db:types": "scripts/db.sh types",
-    "postinstall": "cp node_modules/sql.js/dist/sql-wasm.wasm public/sql-wasm.wasm"
+    "postinstall": "cp node_modules/sql.js/dist/sql-wasm.wasm public/sql-wasm.wasm",
+    "test:integration": "vitest run --config vitest.integration.config.mts",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
@@ -35,6 +37,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.20.4",
     "@types/papaparse": "^5.5.2",

@@ -13,7 +13,7 @@ const LINKS = [
 export function NavLinks() {
   const pathname = usePathname();
   return (
-    <nav className="flex items-center gap-4 text-sm">
+    <nav className="flex items-center gap-3 text-sm whitespace-nowrap sm:gap-4">
       {LINKS.map(({ href, label }) => (
         <Link
           key={href}
